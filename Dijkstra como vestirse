@@ -1,0 +1,119 @@
+import random
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+import cv2
+
+#Vertices
+A = ("Que vestir")
+B = ("Elegante")
+C = ("casual")
+D = ("cine")
+E = ("cafe")
+F = ("bar")
+G = ("salir")
+
+
+#Aristas                               
+A1 = [random.randint(0,5)]
+B1 = [random.randint(0,5)]
+C1 = [random.randint(5,20)]
+D1 = [random.randint(5,20)]
+E1 = [random.randint(5,20)]
+F1 = [random.randint(5,20)]
+G1 = [random.randint(5,20)]
+H1 = [random.randint(5,20)]
+I1 = [random.randint(21,30)]
+J1 = [random.randint(21,30)]
+K1 = [random.randint(21,30)]
+
+distancias=np.array([random.randint(0, 5),random.randint(0, 5),random.randint(5, 20),
+                     random.randint(5, 20),random.randint(5, 20),random.randint(5, 20),
+                     random.randint(5, 20),random.randint(5, 20),random.randint(21, 30),
+                     random.randint(21, 30),random.randint(21, 30)])
+
+
+Vistiendonos={'que vestir':{'Elegante':distancias[0],'Casual':distancias[1]},'Elegante':{'cine':distancias[2],'cafe':distancias[3],'bar':distancias[4]},
+ 'casual':{'cine':distancias[5],'cafe':distancias[6],'bar':distancias[7]},'cine':{'salir':distancias[8]},'cafe':{'salir':distancias[9]},'bar':{'Salir':distancias[10]}}
+
+def dijkstra(mapa, vertice, fin):
+	distancia={}
+	avanzado={}
+	restante=Vistiendonos
+	infinito=99
+	camino=[]
+
+	for nodo in restante:
+		distancia[nodo]=infinito
+	distancia[vertice]=0
+
+	while restante:
+		nodominimo=None
+		for nodo in restante:
+			if nodominimo is None:
+				nodominimo=nodo
+			elif distancia[nodo]<distancia[nodominimo]:
+				nodominimo=nodo
+
+		for siguiente, peso in Vistiendonos[nodominimo].items():
+			if peso + distancia[nodominimo]<distancia[siguiente]:
+				distancia[siguiente]=peso+distancia[nodominimo]
+				avanzado[siguiente]=nodominimo 
+				restante.pop(nodominimo)
+				actual=fin
+
+
+	while actual!=vertice:
+		try:
+			camino.insert(0,actual)
+			actual=avanzado[actual]
+		except KeyError:
+			print("No se puede vestir asi")
+			break
+	camino.insert(0,vertice)
+	if distancia[fin]!=infinito:
+		print("La mejor opcion es "+str.upper(vertice)+" con " +str.upper(fin)
+        +" ir y " +str(distancia[fin]))
+		print("La mejor opcion es: " + str(camino))
+dijkstra(Vistiendonos, "Que vestir" , "Salir" )
+
+Vestir = nx.Graph()  
+
+Vestir.add_node("Que vestir")
+Vestir.add_node("Elegante")
+Vestir.add_node("Casual")
+Vestir.add_node("cine")
+Vestir.add_node("cafe")
+Vestir.add_node("bar")
+Vestir.add_node("Salir")
+
+Vestir.add_edge(A,B) 
+Vestir.add_edge(A,C)
+Vestir.add_edge(B,D)
+Vestir.add_edge(B,E) 
+Vestir.add_edge(B,F)
+Vestir.add_edge(C,D)
+Vestir.add_edge(C,E) 
+Vestir.add_edge(C,F) 
+Vestir.add_edge(D,G)
+Vestir.add_edge(E,G) 
+Vestir.add_edge(F,G) 
+
+
+
+colors = nx.get_edge_attributes(Vestir,'color').values()
+print(colors)
+coords = {"Que vestir":(-3,0),"Elegante":(0,3),"Casual":(-1,1.5),"cine":(0,2.5),"cafe":(2,1.5),"bar":(-1.2,0),"slir":(1.2,0)}
+
+
+nx.draw(
+    Vestir, pos= coords, edge_color=colors, width=2, linewidths=2,
+    node_size=1500, node_color='pink', alpha=1,
+    labels={node: node for node in Vestir.nodes()}
+
+
+nx.draw(vestir, with_labels=True, )
+plt.show()
+
+
+ 
